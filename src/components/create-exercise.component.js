@@ -22,9 +22,13 @@ export default class CreateExercises extends Component {
   }
 
   componentDidMount() {
-    this.setState({
-      users: ["Test User"],
-      username: "test user",
+    axios.get("http://localhost:5000/users").then((response) => {
+      if (response.data.length > 0) {
+        this.setState({
+          users: response.data.map((user) => user.username),
+          user: response.data[0].username,
+        });
+      }
     });
   }
 
@@ -63,7 +67,12 @@ export default class CreateExercises extends Component {
 
     console.log(exercise);
 
-    window.location = "/";
+    axios
+      .post("http://localhost:5000/exercises/add", exercise)
+      .then((res) => console.log(res.data))
+      .catch((err) => console.log("Error: " + err));
+
+    // window.location = "/";
   }
 
   render() {
@@ -74,7 +83,6 @@ export default class CreateExercises extends Component {
           <div className="form-group">
             <label>Username: </label>
             <select
-              ref="userInput"
               required
               className="form-control"
               value={this.state.username}
